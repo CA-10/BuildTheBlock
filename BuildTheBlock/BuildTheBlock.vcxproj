@@ -21,11 +21,15 @@
   <ItemGroup>
     <ClCompile Include="colours.cpp" />
     <ClCompile Include="constants.cpp" />
+    <ClCompile Include="level.cpp" />
+    <ClCompile Include="levels.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="colours.h" />
     <ClInclude Include="constants.h" />
+    <ClInclude Include="level.h" />
+    <ClInclude Include="levels.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
