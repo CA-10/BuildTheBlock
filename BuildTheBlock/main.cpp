@@ -1,11 +1,14 @@
 #include "raylib.h"
 #include "colours.h"
 #include "constants.h"
+#include "levels.h"
 
 void start();
 void update();
 void render();
 void renderGrid();
+
+Level selectedLevel;
 
 int main()
 {
@@ -30,7 +33,7 @@ int main()
 
 void start()
 {
-
+	selectedLevel = levels::level1;
 }
 
 void update()
@@ -48,9 +51,9 @@ void renderGrid()
 	int actualX = 100;
 	int actualY = 100;
 
-	for (int x = 0; x < 10; x++)
+	for (int x = 0; x < selectedLevel.gridCellHeight; x++)
 	{
-		for (int y = 0; y < 10; y++)
+		for (int y = 0; y < selectedLevel.gridCellWidth; y++)
 		{
 			DrawRectangleLines(actualX, actualY, constants::gridCellSize, constants::gridCellSize, BLACK);
 			actualX += constants::gridCellSize;
