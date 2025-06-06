@@ -1,15 +1,15 @@
 #include "raylib.h"
-
-const int screenWidth = 1600;
-const int screenHeight = 800;
+#include "colours.h"
+#include "constants.h"
 
 void start();
 void update();
 void render();
+void renderGrid();
 
 int main()
 {
-	InitWindow(screenWidth, screenHeight, "Build The Block");
+	InitWindow(constants::screenWidth, constants::screenHeight, "Build The Block");
 	SetTargetFPS(60);
 
 	start();
@@ -17,7 +17,7 @@ int main()
 	while (!WindowShouldClose())
 	{
 		BeginDrawing();
-		ClearBackground(RAYWHITE);
+		ClearBackground(customColours::backgroundGreen);
 
 		update();
 		render();
@@ -40,5 +40,23 @@ void update()
 
 void render()
 {
+	renderGrid();
+}
 
+void renderGrid()
+{
+	int actualX = 100;
+	int actualY = 100;
+
+	for (int x = 0; x < 10; x++)
+	{
+		for (int y = 0; y < 10; y++)
+		{
+			DrawRectangleLines(actualX, actualY, constants::gridCellSize, constants::gridCellSize, BLACK);
+			actualX += constants::gridCellSize;
+		}
+
+		actualX = 100;
+		actualY += constants::gridCellSize;
+	}
 }
