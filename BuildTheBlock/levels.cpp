@@ -5,6 +5,7 @@
  * 2 = Passenger
  * 3 = Car
  * 4 = Destination
+ * 5 = Tunnel
  */
 
 namespace levels
