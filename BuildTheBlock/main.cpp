@@ -9,6 +9,7 @@ void start();
 void loadTextures();
 void loadPieces();
 void update();
+void checkPieceSelection();
 void render();
 void renderGrid();
 void renderPieces();
@@ -16,6 +17,8 @@ void unloadTextures();
 
 Level selectedLevel;
 std::vector<Piece> activePieces;
+Piece* selectedPiece = NULL;
+Vector2 dragOffset = Vector2();
 
 namespace textures
 {
@@ -65,15 +68,64 @@ void loadPieces()
 {
 	activePieces = std::vector<Piece>();
 
+	int offsetY = 0;
+
 	for (std::string pieceName : selectedLevel.levelPieces)
 	{
-		activePieces.push_back(pieces::piecesMap[pieceName]);
+		Piece* piece = &pieces::piecesMap[pieceName];
+		(*piece).position = Vector2{ piece->position.x, piece->position.y + offsetY };
+
+		activePieces.push_back(*piece);
+
+		offsetY += (piece->pieceLayout.size() * constants::gridCellSize) + constants::gridCellSize;
 	}
 }
 
 void update()
 {
+	checkPieceSelection();
 
+	if (selectedPiece != NULL)
+	{
+		selectedPiece->position.x = GetMousePosition().x - dragOffset.x;
+		selectedPiece->position.y = GetMousePosition().y - dragOffset.y;
+
+		if (IsKeyPressed(KEY_R))
+			selectedPiece->rotate90Clockwise();
+
+		if (IsMouseButtonReleased(0))
+			selectedPiece = NULL;
+	}
+}
+
+void checkPieceSelection()
+{
+	for (int i = 0; i < activePieces.size(); i++)
+	{
+		Piece* piece = &activePieces[i];
+
+		int startX = piece->position.x;
+		int startY = piece->position.y;
+
+		int endX = piece->position.x + (piece->pieceLayout[0].size() * constants::gridCellSize);
+		int endY = piece->position.y + (piece->pieceLayout.size() * constants::gridCellSize);
+
+		if ((GetMousePosition().x >= startX && GetMousePosition().x <= endX) && (GetMousePosition().y >= startY && GetMousePosition().y <= endY))
+		{
+			piece->isHighlighted = true;
+
+			if (IsMouseButtonDown(0) && selectedPiece == NULL)
+			{
+				selectedPiece = piece;
+				dragOffset.x = GetMousePosition().x - selectedPiece->position.x;
+				dragOffset.y = GetMousePosition().y - selectedPiece->position.y;
+			}
+		}
+		else if (piece != selectedPiece)
+		{
+			piece->isHighlighted = false;
+		}
+	}
 }
 
 void render()
@@ -84,11 +136,13 @@ void render()
 
 void renderPieces()
 {
-	int actualX = 30;
-	int actualY = 30;
-
 	for (Piece piece : activePieces)
 	{
+		int initialX = piece.position.x;
+
+		int actualX = piece.position.x;
+		int actualY = piece.position.y;
+
 		for (int x = 0; x < piece.pieceLayout.size(); x++)
 		{
 			for (int y = 0; y < piece.pieceLayout[0].size(); y++)
@@ -96,17 +150,21 @@ void renderPieces()
 				if (piece.pieceLayout[x][y] == 1)
 				{
 					DrawRectangle(actualX, actualY, constants::gridCellSize, constants::gridCellSize, piece.pieceColour);
-					DrawRectangleLines(actualX, actualY, constants::gridCellSize, constants::gridCellSize, BLACK);
+
+					Color outlineColour = BLACK;
+
+					if (piece.isHighlighted)
+						outlineColour = WHITE;
+					
+					DrawRectangleLines(actualX, actualY, constants::gridCellSize, constants::gridCellSize, outlineColour);
 				}
 
 				actualX += constants::gridCellSize;
 			}
 
-			actualX = 30;
+			actualX = initialX;
 			actualY += constants::gridCellSize;
 		}
-
-		actualY += 30;
 	}
 }
 
