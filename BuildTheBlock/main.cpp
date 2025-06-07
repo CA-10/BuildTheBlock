@@ -4,11 +4,21 @@
 #include "levels.h"
 
 void start();
+void loadTextures();
 void update();
 void render();
 void renderGrid();
+void unloadTextures();
 
 Level selectedLevel;
+
+namespace textures
+{
+	Texture2D maintenanceTileTexture;
+	Texture2D passengerTileTexture;
+	Texture2D destinationTileTexture;
+	Texture2D carTileTexture;
+}
 
 int main()
 {
@@ -16,6 +26,7 @@ int main()
 	SetTargetFPS(60);
 
 	start();
+	loadTextures();
 
 	while (!WindowShouldClose())
 	{
@@ -28,12 +39,21 @@ int main()
 		EndDrawing();
 	}
 
+	unloadTextures();
 	CloseWindow();
 }
 
 void start()
 {
 	selectedLevel = levels::level1;
+}
+
+void loadTextures()
+{
+	textures::maintenanceTileTexture = LoadTexture("res\\maintenanceTile.png");
+	textures::passengerTileTexture = LoadTexture("res\\passengerTile.png");
+	textures::destinationTileTexture = LoadTexture("res\\destinationTile.png");
+	textures::carTileTexture = LoadTexture("res\\carTile.png");
 }
 
 void update()
@@ -66,32 +86,58 @@ void renderGrid()
 
 			int gridMarker = selectedLevel.levelGrid[x][y];
 
-			Color cellBackgroundColour;
+			DrawRectangle(actualX, actualY, constants::gridCellSize, constants::gridCellSize, customColours::gridGrey);
+
+			Texture2D* tileTexture = NULL;
 
 			switch (gridMarker)
 			{
-				//Empty cell
-				case 0:
-				{
-					cellBackgroundColour = customColours::gridGrey;
-				}
-				break;
-
 				//Roadworks
 				case 1:
 				{
-					cellBackgroundColour = customColours::roadworksOrange;
+					tileTexture = &textures::maintenanceTileTexture;
+				}
+				break;
+
+				//Passenger
+				case 2:
+				{
+					tileTexture = &textures::passengerTileTexture;
+				}
+				break;
+
+				//Car
+				case 3:
+				{
+					float width = textures::carTileTexture.width;
+					float height = textures::carTileTexture.height;
+
+					DrawTexturePro(	textures::carTileTexture, 
+									Rectangle{ 0.0f, 0.0f, width, height }, 
+									{ (float)actualX + width / 2.0f, (float)actualY + height / 2.0f, (float)width, (float)height }, 
+									Vector2{ width / 2.0f, height / 2.0f }, 
+									selectedLevel.carRotation, 
+									WHITE);
+				}
+				break;
+
+				//Destination
+				case 4:
+				{
+					tileTexture = &textures::destinationTileTexture;
 				}
 				break;
 
 				default:
 				{
-					cellBackgroundColour = customColours::gridGrey;
+					DrawRectangle(actualX, actualY, constants::gridCellSize, constants::gridCellSize, customColours::gridGrey);
 				}
 				break;
 			}
 			
-			DrawRectangle(actualX, actualY, constants::gridCellSize, constants::gridCellSize, cellBackgroundColour);
+			if (tileTexture != NULL)
+				DrawTexture(*tileTexture, actualX, actualY, WHITE);
+
 			DrawRectangleLines(actualX, actualY, constants::gridCellSize, constants::gridCellSize, BLACK);
 			actualX += constants::gridCellSize;
 		}
@@ -99,4 +145,12 @@ void renderGrid()
 		actualX = startX;
 		actualY += constants::gridCellSize;
 	}
+}
+
+void unloadTextures()
+{
+	UnloadTexture(textures::maintenanceTileTexture);
+	UnloadTexture(textures::passengerTileTexture);
+	UnloadTexture(textures::destinationTileTexture);
+	UnloadTexture(textures::carTileTexture);
 }
