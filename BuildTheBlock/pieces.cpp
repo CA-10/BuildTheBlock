@@ -9,7 +9,8 @@ namespace pieces
 				{ 0, 0, 1 },
 				{ 1, 1, 1 },
 			},
-			PURPLE
+			PURPLE,
+			Vector2{30, 30}
 		} },
 
 		{ "green", Piece{
@@ -17,7 +18,8 @@ namespace pieces
 				{ 0, 1, 1 },
 				{ 1, 1, 1 },
 			},
-			GREEN
+			GREEN,
+			Vector2{30, 30}
 		} },
 	};
 }

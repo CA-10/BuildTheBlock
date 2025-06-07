@@ -8,9 +8,11 @@ struct Piece
 {
 	std::vector<std::vector<int>> pieceLayout;
 	Color pieceColour;
+	Vector2 position;
+	bool isHighlighted;
 
 	Piece();
-	Piece(std::vector<std::vector<int>> pieceLayout, Color pieceColour);
+	Piece(std::vector<std::vector<int>> pieceLayout, Color pieceColour, Vector2 startPosition);
 	void rotate90Clockwise();
 };
 
