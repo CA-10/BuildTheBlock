@@ -48,18 +48,22 @@ void render()
 
 void renderGrid()
 {
-	int actualX = 100;
-	int actualY = 100;
+	int startX = (int)(constants::screenWidth / 2) - (selectedLevel.gridCellWidth * (constants::gridCellSize / 2));
+	int startY = (int)(constants::screenHeight / 2) - (selectedLevel.gridCellHeight * (constants::gridCellSize / 2));
+
+	int actualX = startX;
+	int actualY = startY;
 
 	for (int x = 0; x < selectedLevel.gridCellHeight; x++)
 	{
 		for (int y = 0; y < selectedLevel.gridCellWidth; y++)
 		{
+			DrawRectangle(actualX, actualY, constants::gridCellSize, constants::gridCellSize, customColours::gridGrey);
 			DrawRectangleLines(actualX, actualY, constants::gridCellSize, constants::gridCellSize, BLACK);
 			actualX += constants::gridCellSize;
 		}
 
-		actualX = 100;
+		actualX = startX;
 		actualY += constants::gridCellSize;
 	}
 }
