@@ -8,9 +8,10 @@ Level::Level()
 	gridCellHeight = 0;
 	carRotation = 0;
 	levelGrid = std::vector<std::vector<int>>();
+	levelPieces = std::vector<std::string>();
 }
 
-Level::Level(int levelNumber, std::string levelName, int gridCellWidth, int gridCellHeight, int carRotation, std::vector<std::vector<int>> levelGrid)
+Level::Level(int levelNumber, std::string levelName, int gridCellWidth, int gridCellHeight, int carRotation, std::vector<std::vector<int>> levelGrid, std::vector<std::string> levelPieces)
 {
 	this->levelNumber = levelNumber;
 	this->levelName = levelName;
@@ -18,4 +19,5 @@ Level::Level(int levelNumber, std::string levelName, int gridCellWidth, int grid
 	this->gridCellHeight = gridCellHeight;
 	this->carRotation = carRotation;
 	this->levelGrid = levelGrid;
+	this->levelPieces = levelPieces;
 }
