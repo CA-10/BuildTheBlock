@@ -2,6 +2,7 @@
 #include "colours.h"
 #include "constants.h"
 #include "levels.h"
+#include <unordered_map>
 
 void start();
 void loadTextures();
@@ -14,10 +15,13 @@ Level selectedLevel;
 
 namespace textures
 {
-	Texture2D maintenanceTileTexture;
-	Texture2D passengerTileTexture;
-	Texture2D destinationTileTexture;
-	Texture2D carTileTexture;
+	std::unordered_map<std::string, Texture2D> texturesMap = std::unordered_map<std::string, Texture2D>
+	{
+		{"maintenanceTileTexture", Texture2D()},
+		{"passengerTileTexture", Texture2D()},
+		{"destinationTileTexture", Texture2D()},
+		{"carTileTexture", Texture2D()},
+	};
 }
 
 int main()
@@ -50,10 +54,10 @@ void start()
 
 void loadTextures()
 {
-	textures::maintenanceTileTexture = LoadTexture("res\\maintenanceTile.png");
-	textures::passengerTileTexture = LoadTexture("res\\passengerTile.png");
-	textures::destinationTileTexture = LoadTexture("res\\destinationTile.png");
-	textures::carTileTexture = LoadTexture("res\\carTile.png");
+	textures::texturesMap["maintenanceTileTexture"] = LoadTexture("res\\maintenanceTile.png");
+	textures::texturesMap["passengerTileTexture"] = LoadTexture("res\\passengerTile.png");
+	textures::texturesMap["destinationTileTexture"] = LoadTexture("res\\destinationTile.png");
+	textures::texturesMap["carTileTexture"] = LoadTexture("res\\carTile.png");
 }
 
 void update()
@@ -95,24 +99,24 @@ void renderGrid()
 				//Roadworks
 				case 1:
 				{
-					tileTexture = &textures::maintenanceTileTexture;
+					tileTexture = &textures::texturesMap["maintenanceTileTexture"];
 				}
 				break;
 
 				//Passenger
 				case 2:
 				{
-					tileTexture = &textures::passengerTileTexture;
+					tileTexture = &textures::texturesMap["passengerTileTexture"];
 				}
 				break;
 
 				//Car
 				case 3:
 				{
-					float width = textures::carTileTexture.width;
-					float height = textures::carTileTexture.height;
+					float width = textures::texturesMap["carTileTexture"].width;
+					float height = textures::texturesMap["carTileTexture"].height;
 
-					DrawTexturePro(	textures::carTileTexture, 
+					DrawTexturePro(	textures::texturesMap["carTileTexture"],
 									Rectangle{ 0.0f, 0.0f, width, height }, 
 									{ (float)actualX + width / 2.0f, (float)actualY + height / 2.0f, (float)width, (float)height }, 
 									Vector2{ width / 2.0f, height / 2.0f }, 
@@ -124,7 +128,7 @@ void renderGrid()
 				//Destination
 				case 4:
 				{
-					tileTexture = &textures::destinationTileTexture;
+					tileTexture = &textures::texturesMap["destinationTileTexture"];
 				}
 				break;
 
@@ -149,8 +153,8 @@ void renderGrid()
 
 void unloadTextures()
 {
-	UnloadTexture(textures::maintenanceTileTexture);
-	UnloadTexture(textures::passengerTileTexture);
-	UnloadTexture(textures::destinationTileTexture);
-	UnloadTexture(textures::carTileTexture);
+	for (auto it = textures::texturesMap.begin(); it != textures::texturesMap.end(); ++it)
+	{
+		UnloadTexture(it->second);
+	}
 }
