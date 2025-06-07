@@ -7,6 +7,7 @@ namespace customColours
 {
 	extern Color backgroundGreen;
 	extern Color gridGrey;
+	extern Color roadworksOrange;
 }
 
 #endif
