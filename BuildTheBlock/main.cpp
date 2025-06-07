@@ -15,13 +15,7 @@ Level selectedLevel;
 
 namespace textures
 {
-	std::unordered_map<std::string, Texture2D> texturesMap = std::unordered_map<std::string, Texture2D>
-	{
-		{"maintenanceTileTexture", Texture2D()},
-		{"passengerTileTexture", Texture2D()},
-		{"destinationTileTexture", Texture2D()},
-		{"carTileTexture", Texture2D()},
-	};
+	std::unordered_map<std::string, Texture2D> texturesMap = std::unordered_map<std::string, Texture2D>();
 }
 
 int main()
@@ -58,6 +52,7 @@ void loadTextures()
 	textures::texturesMap["passengerTileTexture"] = LoadTexture("res\\passengerTile.png");
 	textures::texturesMap["destinationTileTexture"] = LoadTexture("res\\destinationTile.png");
 	textures::texturesMap["carTileTexture"] = LoadTexture("res\\carTile.png");
+	textures::texturesMap["tunnelTileTexture"] = LoadTexture("res\\tunnelTile.png");
 }
 
 void update()
@@ -129,6 +124,13 @@ void renderGrid()
 				case 4:
 				{
 					tileTexture = &textures::texturesMap["destinationTileTexture"];
+				}
+				break;
+
+				//Tunnel
+				case 5:
+				{
+					tileTexture = &textures::texturesMap["tunnelTileTexture"];
 				}
 				break;
 
