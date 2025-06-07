@@ -56,9 +56,42 @@ void renderGrid()
 
 	for (int x = 0; x < selectedLevel.gridCellHeight; x++)
 	{
+		if (selectedLevel.levelGrid.size() <= x)
+			continue;
+
 		for (int y = 0; y < selectedLevel.gridCellWidth; y++)
 		{
-			DrawRectangle(actualX, actualY, constants::gridCellSize, constants::gridCellSize, customColours::gridGrey);
+			if (selectedLevel.levelGrid[x].size() <= y)
+				continue;
+
+			int gridMarker = selectedLevel.levelGrid[x][y];
+
+			Color cellBackgroundColour;
+
+			switch (gridMarker)
+			{
+				//Empty cell
+				case 0:
+				{
+					cellBackgroundColour = customColours::gridGrey;
+				}
+				break;
+
+				//Roadworks
+				case 1:
+				{
+					cellBackgroundColour = customColours::roadworksOrange;
+				}
+				break;
+
+				default:
+				{
+					cellBackgroundColour = customColours::gridGrey;
+				}
+				break;
+			}
+			
+			DrawRectangle(actualX, actualY, constants::gridCellSize, constants::gridCellSize, cellBackgroundColour);
 			DrawRectangleLines(actualX, actualY, constants::gridCellSize, constants::gridCellSize, BLACK);
 			actualX += constants::gridCellSize;
 		}
