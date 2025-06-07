@@ -3,15 +3,19 @@
 #include "constants.h"
 #include "levels.h"
 #include <unordered_map>
+#include "pieces.h"
 
 void start();
 void loadTextures();
+void loadPieces();
 void update();
 void render();
 void renderGrid();
+void renderPieces();
 void unloadTextures();
 
 Level selectedLevel;
+std::vector<Piece> activePieces;
 
 namespace textures
 {
@@ -44,6 +48,8 @@ int main()
 void start()
 {
 	selectedLevel = levels::level1;
+
+	loadPieces();
 }
 
 void loadTextures()
@@ -55,6 +61,16 @@ void loadTextures()
 	textures::texturesMap["tunnelTileTexture"] = LoadTexture("res\\tunnelTile.png");
 }
 
+void loadPieces()
+{
+	activePieces = std::vector<Piece>();
+
+	for (std::string pieceName : selectedLevel.levelPieces)
+	{
+		activePieces.push_back(pieces::piecesMap[pieceName]);
+	}
+}
+
 void update()
 {
 
@@ -63,6 +79,35 @@ void update()
 void render()
 {
 	renderGrid();
+	renderPieces();
+}
+
+void renderPieces()
+{
+	int actualX = 30;
+	int actualY = 30;
+
+	for (Piece piece : activePieces)
+	{
+		for (int x = 0; x < piece.pieceLayout.size(); x++)
+		{
+			for (int y = 0; y < piece.pieceLayout[0].size(); y++)
+			{
+				if (piece.pieceLayout[x][y] == 1)
+				{
+					DrawRectangle(actualX, actualY, constants::gridCellSize, constants::gridCellSize, piece.pieceColour);
+					DrawRectangleLines(actualX, actualY, constants::gridCellSize, constants::gridCellSize, BLACK);
+				}
+
+				actualX += constants::gridCellSize;
+			}
+
+			actualX = 30;
+			actualY += constants::gridCellSize;
+		}
+
+		actualY += 30;
+	}
 }
 
 void renderGrid()
