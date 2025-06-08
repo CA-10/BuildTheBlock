@@ -13,6 +13,8 @@ void update();
 void updateSolutionGrid();
 void checkPieceSelection();
 void updateSelectedPiece();
+bool checkSolution();
+bool checkOverlappingPieces(int pieceToGridX, int pieceToGridY);
 void render();
 void renderGrid();
 void renderPieces();
@@ -99,7 +101,9 @@ void loadPieces()
 	for (std::string pieceName : selectedLevel.levelPieces)
 	{
 		Piece* piece = &pieces::piecesMap[pieceName];
-		(*piece).position = Vector2{ piece->position.x, piece->position.y + offsetY };
+
+		piece->startPosition = Vector2{ piece->position.x, piece->position.y + offsetY };
+		piece->position = piece->startPosition;
 
 		activePieces.push_back(*piece);
 
@@ -132,12 +136,44 @@ void updateSelectedPiece()
 		float pieceToGridActualX = gridStartX + (constants::gridCellSize * pieceToGridX);
 		float pieceToGridActualY = gridStartY + (constants::gridCellSize * pieceToGridY);
 
-		selectedPiece->position.x = pieceToGridActualX;
-		selectedPiece->position.y = pieceToGridActualY;
+		if ((pieceToGridX >= 0 && pieceToGridX < selectedLevel.gridCellWidth) && (pieceToGridY >= 0 && pieceToGridY < selectedLevel.gridCellHeight) && !checkOverlappingPieces(pieceToGridX, pieceToGridY))
+		{
+			selectedPiece->position.x = pieceToGridActualX;
+			selectedPiece->position.y = pieceToGridActualY;
+
+			if (checkSolution())
+			{
+				printf("SUCCESS!\n");
+			}
+		}
+		else
+		{
+			selectedPiece->position = selectedPiece->startPosition;
+		}
 
 		updateSolutionGrid();
 		selectedPiece = NULL;
 	}
+}
+
+bool checkOverlappingPieces(int pieceToGridX, int pieceToGridY)
+{
+	for (int x = 0; x < selectedPiece->pieceLayout.size(); x++)
+	{
+		for (int y = 0; y < selectedPiece->pieceLayout[0].size(); y++)
+		{
+			//Check if piece is actually fully on the grid. If not, return false because same behaviour as overlapping
+			if ((pieceToGridX + y < 0 || pieceToGridX + y >= selectedLevel.solutionGrid.size()) || (pieceToGridY + x < 0 || pieceToGridY + x >= selectedLevel.solutionGrid[0].size()))
+				return true;
+
+			if (activeSolutionGrid[pieceToGridX + y][pieceToGridY + x] == 1 && selectedPiece->pieceLayout[x][y] == 1)
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 void updateSolutionGrid()
@@ -162,16 +198,6 @@ void updateSolutionGrid()
 				}
 			}
 		}
-	}
-
-	for (int x = 0; x < activeSolutionGrid.size(); x++)
-	{
-		for (int y = 0; y < activeSolutionGrid[0].size(); y++)
-		{
-			printf("%d", activeSolutionGrid[y][x]);
-		}
-
-		printf("\n");
 	}
 }
 
@@ -208,6 +234,20 @@ void checkPieceSelection()
 			hoveredPiece = NULL;
 		}
 	}
+}
+
+bool checkSolution()
+{
+	for (int x = 0; x < activeSolutionGrid.size(); x++)
+	{
+		for (int y = 0; y < activeSolutionGrid[0].size(); y++)
+		{
+			if (selectedLevel.solutionGrid[y][x] != activeSolutionGrid[x][y])
+				return false;
+		}
+	}
+
+	return true;
 }
 
 void render()

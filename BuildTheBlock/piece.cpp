@@ -6,6 +6,7 @@ Piece::Piece()
 	pieceColour = BLACK;
     position = Vector2();
     isHighlighted = false;
+    startPosition = Vector2();
 }
 
 Piece::Piece(std::vector<std::vector<int>> pieceLayout, Color pieceColour, Vector2 startPosition)
@@ -14,6 +15,7 @@ Piece::Piece(std::vector<std::vector<int>> pieceLayout, Color pieceColour, Vecto
 	this->pieceColour = pieceColour;
     this->position = startPosition;
     this->isHighlighted = false;
+    this->startPosition = Vector2();
 }
 
 void Piece::rotate90Clockwise() 
