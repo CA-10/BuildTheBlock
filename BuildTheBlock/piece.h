@@ -9,6 +9,7 @@ struct Piece
 	std::vector<std::vector<int>> pieceLayout;
 	Color pieceColour;
 	Vector2 position;
+	Vector2 startPosition;
 	bool isHighlighted;
 
 	Piece();

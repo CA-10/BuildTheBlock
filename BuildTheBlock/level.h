@@ -12,10 +12,11 @@ struct Level
 	int gridCellHeight;
 	int carRotation;
 	std::vector<std::vector<int>> levelGrid;
+	std::vector<std::vector<int>> solutionGrid;
 	std::vector<std::string> levelPieces;
 
 	Level();
-	Level(int levelNumber, std::string levelName, int gridCellWidth, int gridCellHeight, int carRotation, std::vector<std::vector<int>> levelGrid, std::vector<std::string> levelPieces);
+	Level(int levelNumber, std::string levelName, int gridCellWidth, int gridCellHeight, int carRotation, std::vector<std::vector<int>> levelGrid, std::vector<std::vector<int>> solutionGrid, std::vector<std::string> levelPieces);
 };
 
 #endif
