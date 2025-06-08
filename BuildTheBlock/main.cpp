@@ -6,10 +6,13 @@
 #include "pieces.h"
 
 void start();
+void resetSolutionGrid();
 void loadTextures();
 void loadPieces();
 void update();
+void updateSolutionGrid();
 void checkPieceSelection();
+void updateSelectedPiece();
 void render();
 void renderGrid();
 void renderPieces();
@@ -20,6 +23,10 @@ std::vector<Piece> activePieces;
 Piece* selectedPiece = NULL;
 Piece* hoveredPiece = NULL;
 Vector2 dragOffset = Vector2();
+std::vector<std::vector<int>> activeSolutionGrid;
+
+int gridStartX = 0;
+int gridStartY = 0;
 
 namespace textures
 {
@@ -53,7 +60,25 @@ void start()
 {
 	selectedLevel = levels::level1;
 
+	resetSolutionGrid();
 	loadPieces();
+}
+
+void resetSolutionGrid()
+{
+	activeSolutionGrid = std::vector<std::vector<int>>();
+
+	for (int x = 0; x < selectedLevel.levelGrid.size(); x++)
+	{
+		std::vector<int> row = std::vector<int>();
+
+		for (int y = 0; y < selectedLevel.levelGrid[0].size(); y++)
+		{
+			row.push_back(0);
+		}
+
+		activeSolutionGrid.push_back(row);
+	}
 }
 
 void loadTextures()
@@ -85,17 +110,68 @@ void loadPieces()
 void update()
 {
 	checkPieceSelection();
+	updateSelectedPiece();
+}
 
-	if (selectedPiece != NULL)
+void updateSelectedPiece()
+{
+	if (selectedPiece == NULL)
+		return;
+
+	selectedPiece->position.x = GetMousePosition().x - dragOffset.x;
+	selectedPiece->position.y = GetMousePosition().y - dragOffset.y;
+
+	int pieceToGridX = (selectedPiece->position.x - gridStartX) / constants::gridCellSize;
+	int pieceToGridY = (selectedPiece->position.y - gridStartY) / constants::gridCellSize;
+
+	if (IsKeyPressed(KEY_R))
+		selectedPiece->rotate90Clockwise();
+
+	if (IsMouseButtonReleased(0))
 	{
-		selectedPiece->position.x = GetMousePosition().x - dragOffset.x;
-		selectedPiece->position.y = GetMousePosition().y - dragOffset.y;
+		float pieceToGridActualX = gridStartX + (constants::gridCellSize * pieceToGridX);
+		float pieceToGridActualY = gridStartY + (constants::gridCellSize * pieceToGridY);
 
-		if (IsKeyPressed(KEY_R))
-			selectedPiece->rotate90Clockwise();
+		selectedPiece->position.x = pieceToGridActualX;
+		selectedPiece->position.y = pieceToGridActualY;
 
-		if (IsMouseButtonReleased(0))
-			selectedPiece = NULL;
+		updateSolutionGrid();
+		selectedPiece = NULL;
+	}
+}
+
+void updateSolutionGrid()
+{
+	resetSolutionGrid();
+
+	for (int i = 0; i < activePieces.size(); i++)
+	{
+		Piece* piece = &activePieces[i];
+
+		int pieceToGridX = (piece->position.x - gridStartX) / constants::gridCellSize;
+		int pieceToGridY = (piece->position.y - gridStartY) / constants::gridCellSize;
+
+		if ((pieceToGridX >= 0 && pieceToGridX < selectedLevel.gridCellWidth) && (pieceToGridY >= 0 && pieceToGridY < selectedLevel.gridCellHeight))
+		{
+			for (int x = 0; x < piece->pieceLayout.size(); x++)
+			{
+				for (int y = 0; y < piece->pieceLayout[0].size(); y++)
+				{
+					if (activeSolutionGrid[pieceToGridX + y][pieceToGridY + x] == 0)
+						activeSolutionGrid[pieceToGridX + y][pieceToGridY + x] = piece->pieceLayout[x][y];
+				}
+			}
+		}
+	}
+
+	for (int x = 0; x < activeSolutionGrid.size(); x++)
+	{
+		for (int y = 0; y < activeSolutionGrid[0].size(); y++)
+		{
+			printf("%d", activeSolutionGrid[y][x]);
+		}
+
+		printf("\n");
 	}
 }
 
@@ -176,11 +252,11 @@ void renderPieces()
 
 void renderGrid()
 {
-	int startX = (int)(constants::screenWidth / 2) - (selectedLevel.gridCellWidth * (constants::gridCellSize / 2));
-	int startY = (int)(constants::screenHeight / 2) - (selectedLevel.gridCellHeight * (constants::gridCellSize / 2));
+	gridStartX = (int)(constants::screenWidth / 2) - (selectedLevel.gridCellWidth * (constants::gridCellSize / 2));
+	gridStartY = (int)(constants::screenHeight / 2) - (selectedLevel.gridCellHeight * (constants::gridCellSize / 2));
 
-	int actualX = startX;
-	int actualY = startY;
+	int actualX = gridStartX;
+	int actualY = gridStartY;
 
 	for (int x = 0; x < selectedLevel.gridCellHeight; x++)
 	{
@@ -257,7 +333,7 @@ void renderGrid()
 			actualX += constants::gridCellSize;
 		}
 
-		actualX = startX;
+		actualX = gridStartX;
 		actualY += constants::gridCellSize;
 	}
 }
