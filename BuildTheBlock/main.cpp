@@ -18,6 +18,7 @@ void unloadTextures();
 Level selectedLevel;
 std::vector<Piece> activePieces;
 Piece* selectedPiece = NULL;
+Piece* hoveredPiece = NULL;
 Vector2 dragOffset = Vector2();
 
 namespace textures
@@ -112,18 +113,23 @@ void checkPieceSelection()
 
 		if ((GetMousePosition().x >= startX && GetMousePosition().x <= endX) && (GetMousePosition().y >= startY && GetMousePosition().y <= endY))
 		{
-			piece->isHighlighted = true;
-
-			if (IsMouseButtonDown(0) && selectedPiece == NULL)
+			if (hoveredPiece == NULL || hoveredPiece == piece)
 			{
-				selectedPiece = piece;
-				dragOffset.x = GetMousePosition().x - selectedPiece->position.x;
-				dragOffset.y = GetMousePosition().y - selectedPiece->position.y;
+				piece->isHighlighted = true;
+				hoveredPiece = piece;
+
+				if (IsMouseButtonDown(0) && selectedPiece == NULL)
+				{
+					selectedPiece = piece;
+					dragOffset.x = GetMousePosition().x - selectedPiece->position.x;
+					dragOffset.y = GetMousePosition().y - selectedPiece->position.y;
+				}
 			}
 		}
 		else if (piece != selectedPiece)
 		{
 			piece->isHighlighted = false;
+			hoveredPiece = NULL;
 		}
 	}
 }
