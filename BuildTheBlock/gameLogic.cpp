@@ -78,22 +78,42 @@ void updateSelectedPiece()
 
 bool checkOverlappingPieces(int pieceToGridX, int pieceToGridY)
 {
-	for (int x = 0; x < activeLevel::selectedPiece->pieceLayout.size(); x++)
+	int pieceRows = activeLevel::selectedPiece->pieceLayout.size();
+	int pieceCols = activeLevel::selectedPiece->pieceLayout[0].size();
+
+	int gridRows = activeLevel::level.levelGrid.size();
+	int gridCols = activeLevel::level.levelGrid[0].size();
+
+	for (int row = 0; row < pieceRows; row++)
 	{
-		for (int y = 0; y < activeLevel::selectedPiece->pieceLayout[0].size(); y++)
+		for (int col = 0; col < pieceCols; col++)
 		{
-			//Check if piece is actually fully on the grid. If not, return false because same behaviour as overlapping
-			if ((pieceToGridX + y < 0 || pieceToGridX + y >= activeLevel::level.solutionGrid.size()) || (pieceToGridY + x < 0 || pieceToGridY + x >= activeLevel::level.solutionGrid[0].size()))
+			//Only the filled parts of the grid
+			if (activeLevel::selectedPiece->pieceLayout[row][col] != 1)
+				continue;
+
+			int gridX = pieceToGridX + col;
+			int gridY = pieceToGridY + row;
+
+			//Check if it's outside the grid
+			if (gridY < 0 || gridY >= gridRows || gridX < 0 || gridX >= gridCols)
 				return true;
 
-			//Check if overlapping
-			if (activeLevel::activeSolutionGrid[pieceToGridX + y][pieceToGridY + x] == 1 && activeLevel::selectedPiece->pieceLayout[x][y] == 1)
+			//Check if overlapping with another piece in activeSolutionGrid
+			if (activeLevel::activeSolutionGrid[gridY][gridX] == 1)
+				return true;
+
+			//Check if on an invalid tile in levelGrid, only allowed on empty cells and roadworks
+			int tileValue = activeLevel::level.levelGrid[gridY][gridX];
+
+			if (tileValue != 0 && tileValue != 1)
 				return true;
 		}
 	}
 
 	return false;
 }
+
 
 void updateSolutionGrid()
 {
