@@ -31,10 +31,7 @@ int main()
 
 void start()
 {
-	activeLevel::level = levels::level1;
-
-	resetSolutionGrid();
-	loadPieces();
+	loadLevel(levels::levelMap["level2"]);
 }
 
 void update()

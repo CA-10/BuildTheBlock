@@ -21,5 +21,14 @@ namespace pieces
 			GREEN,
 			Vector2{30, 30}
 		} },
+
+		{ "blue", Piece{
+			std::vector<std::vector<int>>{
+				{ 0, 0, 1, 0 },
+				{ 1, 1, 1, 1 },
+			},
+			BLUE,
+			Vector2{30, 30}
+		} },
 	};
 }

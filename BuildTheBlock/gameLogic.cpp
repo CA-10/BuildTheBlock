@@ -1,5 +1,13 @@
 #include "gameLogic.h"
 
+void loadLevel(Level level)
+{
+	activeLevel::level = level;
+
+	resetSolutionGrid();
+	loadPieces();
+}
+
 void resetSolutionGrid()
 {
 	activeLevel::activeSolutionGrid = std::vector<std::vector<int>>();
@@ -69,7 +77,7 @@ void updateSelectedPiece()
 
 		if (checkSolution())
 		{
-			printf("SUCCESS!\n");
+			levelWin();
 		}
 
 		activeLevel::selectedPiece = NULL;
@@ -187,4 +195,9 @@ bool checkSolution()
 	}
 
 	return true;
+}
+
+void levelWin()
+{
+
 }
