@@ -34,3 +34,17 @@ void Piece::rotate90Clockwise()
 
     this->pieceLayout = rotated;
 }
+
+void Piece::flipPiece()
+{
+    int rows = this->pieceLayout.size();
+    int cols = this->pieceLayout[0].size();
+
+    for (int i = 0; i < rows; i++)
+    {
+        for (int j = 0; j < cols / 2; j++)
+        {
+            std::swap(this->pieceLayout[i][j], this->pieceLayout[i][cols - 1 - j]);
+        }
+    }
+}
