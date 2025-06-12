@@ -63,10 +63,26 @@ void updateSelectedPiece()
 
 	if (IsMouseButtonReleased(0))
 	{
+		const float snapTolerance = constants::gridCellSize * 1.0f;
+
+		//Calculate the target snapped position
 		float pieceToGridActualX = activeLevel::gridStartX + (constants::gridCellSize * pieceToGridX);
 		float pieceToGridActualY = activeLevel::gridStartY + (constants::gridCellSize * pieceToGridY);
 
-		if ((pieceToGridX >= 0 && pieceToGridX < activeLevel::level.gridCellWidth) && (pieceToGridY >= 0 && pieceToGridY < activeLevel::level.gridCellHeight) && !checkOverlappingPieces(pieceToGridX, pieceToGridY))
+		//Current position of the selected piece
+		float currentX = activeLevel::selectedPiece->position.x;
+		float currentY = activeLevel::selectedPiece->position.y;
+
+		//Distance to target grid position
+		float distX = std::abs(currentX - pieceToGridActualX);
+		float distY = std::abs(currentY - pieceToGridActualY);
+
+		//Check snapping conditions with tolerance
+		bool withinSnapDistance = (distX <= snapTolerance) && (distY <= snapTolerance);
+		bool withinGridBounds = (pieceToGridX >= 0 && pieceToGridX < activeLevel::level.gridCellWidth) &&
+			(pieceToGridY >= 0 && pieceToGridY < activeLevel::level.gridCellHeight);
+
+		if (withinSnapDistance && withinGridBounds && !checkOverlappingPieces(pieceToGridX, pieceToGridY))
 		{
 			activeLevel::selectedPiece->position.x = pieceToGridActualX;
 			activeLevel::selectedPiece->position.y = pieceToGridActualY;
