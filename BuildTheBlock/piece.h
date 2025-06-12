@@ -15,6 +15,7 @@ struct Piece
 	Piece();
 	Piece(std::vector<std::vector<int>> pieceLayout, Color pieceColour, Vector2 startPosition);
 	void rotate90Clockwise();
+	void flipPiece();
 };
 
 #endif

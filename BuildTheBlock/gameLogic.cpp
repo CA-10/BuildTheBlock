@@ -58,6 +58,9 @@ void updateSelectedPiece()
 	if (IsKeyPressed(KEY_R))
 		activeLevel::selectedPiece->rotate90Clockwise();
 
+	if (IsKeyPressed(KEY_F))
+		activeLevel::selectedPiece->flipPiece();
+
 	if (IsMouseButtonReleased(0))
 	{
 		float pieceToGridActualX = activeLevel::gridStartX + (constants::gridCellSize * pieceToGridX);
